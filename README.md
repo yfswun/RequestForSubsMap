@@ -1,2 +1,2 @@
 # RequestForSubsMap
-Mapping of Request for Subs contract site locations
+Mapping of [ASIAN, Inc.'s Request for Subs](http://requestforsubs.asianinc.org/) contract site locations
