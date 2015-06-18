@@ -1,0 +1,123 @@
+div.GMap, p.GMap {
+   display:block;
+   font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+   width:95%;
+}
+
+h1.GMap {
+   margin:0;
+   padding:8px 5px;
+   font-size:2em;
+   font-weight:bold;
+}
+
+h4.GMap {
+   margin:0px;
+   padding:5px;
+   background-color:gray;
+   color:#fff;
+   font-size:1em;
+   font-weight:bold;
+}
+
+p.GMap {
+   margin:5px;
+   padding:0px;
+   font-size:1em;
+}
+
+.GMapNote {
+   margin:0;
+   padding:5px;
+   color:Crimson;
+   font-size:0.75em;
+   font-weight:bold;
+}
+
+table.GMap, th.GMap, td.GMap {
+   border-collapse:collapse;
+   border:1px solid lightgray;
+   font-size:0.75em;
+   margin:0px;
+   padding:5px;
+}
+
+table.GMap {
+   margin:10px;
+}
+
+.GMapPopupHeader {
+   font-size:1em;
+   font-weight:bold;
+   color:gray;
+   margin:10px;
+   padding:0px;
+}
+
+th.GMapPopupContent {
+   width:10%;
+   text-align:right;
+}
+
+td.GMapPopupContent {
+   width:90%;
+}
+
+.GMapSidebar, #map {
+   float:left;
+}
+
+#map {
+   width:70%;
+}
+
+.GMapSidebar {
+   width:30%;
+   border:1px #000 solid;
+   margin:0px 5px;
+}
+
+ul.GMap, li.GMap {
+   list-style:none;
+   margin:0px;
+   padding:0px;
+}
+
+li.GMap {
+   border-top:1px #000 solid;
+   display:block;
+}
+
+li.GMap a.GMap {
+   display:block;
+   padding:5px;
+   background-color:#E8E8E8;
+   border-bottom:1px #D0D0D0 solid;
+   font-size:0.75em;
+}
+
+li.GMap a.GMap:hover {
+   background-color:#FFFFCC;
+}
+
+li.GMap p.GMap {
+   display:block;
+   padding:3px 5px;
+   margin:0;
+   font-size:0.75em;
+}
+
+.GMapFooter {
+   color:gray;
+}
+
+.GMapFooterItem {
+   display:block;
+   float:left;
+   margin:20px 5px 5px 5px;
+   font-size:0.25em;
+}
+
+img {
+   vertical-align:bottom;
+}
