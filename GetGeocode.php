@@ -30,7 +30,11 @@ class GetGeocode {
       $sql = ""
       . " update     akj9c_adsmanager_ads A"
       . " inner join akj9c_adsmanager_locations L"
-      . " on         A.ad_location = L.ad_location"
+      // . " on         A.ad_location = L.ad_location"
+      . " on         A.ad_siteaddress = L.ad_siteaddress"
+      . "        and A.ad_sitecity = L.ad_sitecity"
+      . "        and A.ad_sitestate = L.ad_sitestate"
+      . "        and A.ad_sitezip = L.ad_sitezip"
       . " set        A.loc_id = L.loc_id"
       . " where"
       . $commonCriteria
@@ -56,16 +60,28 @@ class GetGeocode {
 
       $sql = ""
       . "insert into akj9c_adsmanager_locations"
-      . " (ad_location)"
-      . " select A.ad_location"
+      // . " (ad_location)"
+      . " (ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip)"
+      // . " select A.ad_location"
+      . " select A.ad_siteaddress"
+      . "      , A.ad_sitecity"
+      . "      , A.ad_sitestate"
+      . "      , A.ad_sitezip"
       . " from   akj9c_adsmanager_ads A"
       . " where"
       . $commonCriteria
       . "   and  A.loc_id is null"
-      . "   and  A.ad_location not in"
-      . "           (select ad_location"
+      // . "   and  A.ad_location not in"
+      // . "           (select ad_location"
+      . "   and  concat_ws(',', A.ad_siteaddress, A.ad_sitecity, A.ad_sitestate, A.ad_sitezip)"
+      . "           not in"
+      . "           (select concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip)"
       . "            from   akj9c_adsmanager_locations)"
-      . " group by A.ad_location"
+      // . " group by A.ad_location"
+      . " group by A.ad_siteaddress"
+      . "        , A.ad_sitecity"
+      . "        , A.ad_sitestate"
+      . "        , A.ad_sitezip"
       ;
 
       $qry = $conn->prepare($sql);
@@ -86,12 +102,15 @@ class GetGeocode {
       $process = 'Select new locations for geocoding';
 
       $sql = ""
-      . "select  ad_location"
+      // . "select  ad_location"
+      . "select  concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip) full_add"
       . "  from  akj9c_adsmanager_locations"
       . " where  latitude is null"
       . "   and  longitude is null"
-      . " group by ad_location"
-      . " order by ad_location;"
+      // . " group by ad_location"
+      . " group by concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip)"
+      // . " order by ad_location;"
+      . " order by concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip)"
       ;
 
       $qry = $conn->prepare($sql);
@@ -107,7 +126,8 @@ class GetGeocode {
          if ($result->num_rows > 0) {
             $addresses = [];
             while ($row = $result->fetch_assoc()) {
-               $addresses[] = $row['ad_location'];
+               // $addresses[] = $row['ad_location'];
+               $addresses[] = $row['full_add'];
             }
          }
          $result->close();
@@ -140,7 +160,8 @@ class GetGeocode {
          . "update akj9c_adsmanager_locations"
          . "   set latitude = (?)"
          . "     , longitude = (?)"
-         . " where ad_location = (?)"
+         // . " where ad_location = (?)"
+         . " where concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip) = (?)"
          ;
 
          $qry = $conn->prepare($sql);
@@ -181,7 +202,11 @@ class GetGeocode {
          $sql = ""
          . " update     akj9c_adsmanager_ads A"
          . " inner join akj9c_adsmanager_locations L"
-         . " on         A.ad_location = L.ad_location"
+         // . " on         A.ad_location = L.ad_location"
+         . " on         A.ad_siteaddress = L.ad_siteaddress"
+         . "        and A.ad_sitecity = L.ad_sitecity"
+         . "        and A.ad_sitestate = L.ad_sitestate"
+         . "        and A.ad_sitezip = L.ad_sitezip"
          . " set        A.loc_id = L.loc_id"
          . " where"
          . $commonCriteria

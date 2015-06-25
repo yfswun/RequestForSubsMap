@@ -22,7 +22,9 @@ class MakeMap {
 
       $sql = ""
       . "  select"
-      . "  A.id, A.ad_headline, A.ad_location, A.loc_id"
+      // . "  A.id, A.ad_headline, A.ad_location, A.loc_id"
+      . "  A.id, A.ad_headline, A.loc_id"
+      . ", A.ad_siteaddress, A.ad_sitecity, A.ad_sitestate, A.ad_sitezip"
       . ", L.latitude, L.longitude"
       . ", A.ad_text, A.email, A.name, A.ad_WorkPhone, A.ad_phone"
       . "  from       akj9c_adsmanager_ads A"
@@ -30,7 +32,9 @@ class MakeMap {
       . "  on         A.loc_id = L.loc_id"
       . "  where"
       . Constants::getCommonCriteria()
-      . "  order by A.ad_location, ad_headline, A.ad_text"
+      // . "  order by A.ad_location"
+      . "  order by A.ad_sitestate, A.ad_sitecity, A.ad_siteaddress, A.ad_sitezip"
+      . "    , ad_headline, A.ad_text"
       . ";";
 
       $qry = $conn->prepare($sql);
@@ -74,7 +78,11 @@ class MakeMap {
 
          // Apply HTML Purifier to data
          $clean_company_name = $purifier->purify($item['ad_headline']);
-         $clean_ad_loc       = $purifier->purify($item['ad_location']);
+         // $clean_ad_loc       = $purifier->purify($item['ad_location']);
+         $clean_ad_siteadd   = $purifier->purify($item['ad_siteaddress']);
+         $clean_ad_sitecity  = $purifier->purify($item['ad_sitecity']);
+         $clean_ad_sitestate = $purifier->purify($item['ad_sitestate']);
+         $clean_ad_sitezip   = $purifier->purify($item['ad_sitezip']);
          $clean_ad_text      = $purifier->purify($item['ad_text']);
          $clean_name         = $purifier->purify($item['name']);
          $clean_email        = $purifier->purify($item['email']);
@@ -82,6 +90,8 @@ class MakeMap {
          $clean_fax          = $purifier->purify($item['ad_phone']);
          $clean_long         = $purifier->purify($item['longitude']);
          $clean_lat          = $purifier->purify($item['latitude']);
+         
+         $addStr = "{$clean_ad_siteadd}, {$clean_ad_sitecity}, {$clean_ad_sitestate} {$clean_ad_sitezip}";
          
          // popup window content
          $pop_text =   '<div class="GMap">'
@@ -92,8 +102,13 @@ class MakeMap {
                         . '<td class="GMap GMapPopupContent">' . $clean_company_name . '</td>'
                      . '</tr>'
                      . '<tr>'
-                        . '<th class="GMap GMapPopupContent">Contract Location</th>'
-                        . '<td class="GMap GMapPopupContent">' . $clean_ad_loc . '</td>'
+                        // . '<th class="GMap GMapPopupContent">Contract Location</th>'
+                        . '<th class="GMap GMapPopupContent">Job Site</th>'
+                        // . '<td class="GMap GMapPopupContent">' . $clean_ad_loc . '</td>'
+                        . '<td class="GMap GMapPopupContent">'
+                        . "{$clean_ad_siteadd}<br />"
+                        . "{$clean_ad_sitecity}, {$clean_ad_sitestate} {$clean_ad_sitezip}"
+                        . '</td>'
                      . '</tr>'
                      . '<tr>'
                         . '<th class="GMap GMapPopupContent">Contract Description</th>'
@@ -106,7 +121,9 @@ class MakeMap {
                      . '<tr>'
                         . '<th class="GMap GMapPopupContent">Email</th>'
                         . '<td class="GMap GMapPopupContent">'
-                        .    '<a href="mailto:' . $clean_email . '?Subject=' . $clean_ad_loc . '"'
+                        .    '<a href="mailto:' . $clean_email
+                        // .    '         ?Subject=' . $clean_ad_loc . '"'
+                        .    '         ?Subject=' . $addStr . '"'
                         .    ' target="_top">' . $clean_email . '</a></td>'
                      . '</tr>'
                      . '<tr>'
@@ -121,19 +138,28 @@ class MakeMap {
                      . '</div>';
          
          //add the marker to the map.
-         $marker_id = $MAP_OBJECT->addMarkerByCoords( $clean_long
-                                                    , $clean_lat
-                                                    , $clean_ad_loc
-                                                    , $pop_text
-                                                    );
+         $marker_id = $MAP_OBJECT->addMarkerByCoords(
+                          $clean_long
+                        , $clean_lat
+                     // , $clean_ad_loc
+                        , $addStr
+                        , $pop_text
+                      );
 
          //create an id to be used for the marker opener <a>
          $opener_id = "opener_" . $marker_id;
 
          //append <li> item to sidebar html
          $sidebar_html .= "<li class='GMap' id='$opener_id'>";
-         $sidebar_html .=     '<a class="GMap" href="#">' . $clean_ad_loc . '</a>';
-         $sidebar_html .=     '<p class="GMap">' . substr($clean_ad_text, 0, 40) . ' ...' . '</p>';
+         // $sidebar_html .=     '<a class="GMap" href="#">' . $clean_ad_loc . '</a>';
+         $sidebar_html .=     '<a class="GMap" href="#">' . $addStr . '</a>';
+         $sidebar_html .=     '<p class="GMap">'
+         if (strlen($clean_ad_text) > 40) {
+            $sidebar_html .= substr($clean_ad_text, 0, 40) . ' ...';
+         } else {
+            $sidebar_html .= $clean_ad_text;
+         }
+         $sidebar_html .=     '</p>';
          $sidebar_html .= '</li>';
 
          //add marker opener id to map object
