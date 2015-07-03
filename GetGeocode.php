@@ -20,7 +20,8 @@ class GetGeocode {
          die('Failed to connect to the database: (' . $conn->connect_errno . ') ' . $conn->connect_error . "\n");
       }
 
-
+      $tablePrefix = DBInfo::TABLE_PREFIX;
+      
       // ***************************************************************
       // Update ads table with previous geocoding results (same address)
       // ***************************************************************
@@ -28,8 +29,8 @@ class GetGeocode {
       $process = 'Update ads table with previous geocoding results';
 
       $sql = ""
-      . " update     akj9c_adsmanager_ads A"
-      . " inner join akj9c_adsmanager_locations L"
+      . " update     {$tablePrefix}_adsmanager_ads A"
+      . " inner join {$tablePrefix}_adsmanager_locations L"
       // . " on         A.ad_location = L.ad_location"
       . " on         A.ad_siteaddress = L.ad_siteaddress"
       . "        and A.ad_sitecity = L.ad_sitecity"
@@ -42,6 +43,8 @@ class GetGeocode {
       . "       and  L.latitude is not null"
       . "       and  L.longitude is not null"
       ;
+
+var_dump($sql);
 
       $qry = $conn->prepare($sql);
       if (!$qry) {
@@ -59,7 +62,7 @@ class GetGeocode {
       $process = 'Insert new data for geocoding';
 
       $sql = ""
-      . "insert into akj9c_adsmanager_locations"
+      . "insert into {$tablePrefix}_adsmanager_locations"
       // . " (ad_location)"
       . " (ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip)"
       // . " select A.ad_location"
@@ -67,7 +70,7 @@ class GetGeocode {
       . "      , A.ad_sitecity"
       . "      , A.ad_sitestate"
       . "      , A.ad_sitezip"
-      . " from   akj9c_adsmanager_ads A"
+      . " from   {$tablePrefix}_adsmanager_ads A"
       . " where"
       . $commonCriteria
       . "   and  A.loc_id is null"
@@ -76,7 +79,7 @@ class GetGeocode {
       . "   and  concat_ws(',', A.ad_siteaddress, A.ad_sitecity, A.ad_sitestate, A.ad_sitezip)"
       . "           not in"
       . "           (select concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip)"
-      . "            from   akj9c_adsmanager_locations)"
+      . "            from   {$tablePrefix}_adsmanager_locations)"
       // . " group by A.ad_location"
       . " group by A.ad_siteaddress"
       . "        , A.ad_sitecity"
@@ -104,7 +107,7 @@ class GetGeocode {
       $sql = ""
       // . "select  ad_location"
       . "select  concat_ws(',', ad_siteaddress, ad_sitecity, ad_sitestate, ad_sitezip) full_add"
-      . "  from  akj9c_adsmanager_locations"
+      . "  from  {$tablePrefix}_adsmanager_locations"
       . " where  latitude is null"
       . "   and  longitude is null"
       // . " group by ad_location"
@@ -157,7 +160,7 @@ class GetGeocode {
          $updatedLocRows = 0;
          
          $sql = ""
-         . "update akj9c_adsmanager_locations"
+         . "update {$tablePrefix}_adsmanager_locations"
          . "   set latitude = (?)"
          . "     , longitude = (?)"
          // . " where ad_location = (?)"
@@ -200,8 +203,8 @@ class GetGeocode {
       if ($geocodeResults && $updatedLocRows > 0) {
 
          $sql = ""
-         . " update     akj9c_adsmanager_ads A"
-         . " inner join akj9c_adsmanager_locations L"
+         . " update     {$tablePrefix}_adsmanager_ads A"
+         . " inner join {$tablePrefix}_adsmanager_locations L"
          // . " on         A.ad_location = L.ad_location"
          . " on         A.ad_siteaddress = L.ad_siteaddress"
          . "        and A.ad_sitecity = L.ad_sitecity"

@@ -15,6 +15,7 @@ class MakeMap {
          die('Failed to connect to MySQL: (' . $conn->connect_errno . ') ' . $conn->connect_error);
       }
 
+      $tablePrefix = DBInfo::TABLE_PREFIX;
 
       // ****************************************
       // Select Map Data
@@ -27,8 +28,8 @@ class MakeMap {
       . ", A.ad_siteaddress, A.ad_sitecity, A.ad_sitestate, A.ad_sitezip"
       . ", L.latitude, L.longitude"
       . ", A.ad_text, A.email, A.name, A.ad_WorkPhone, A.ad_phone"
-      . "  from       akj9c_adsmanager_ads A"
-      . "  inner join akj9c_adsmanager_locations L"
+      . "  from       {$tablePrefix}_adsmanager_ads A"
+      . "  inner join {$tablePrefix}_adsmanager_locations L"
       . "  on         A.loc_id = L.loc_id"
       . "  where"
       . Constants::getCommonCriteria()
