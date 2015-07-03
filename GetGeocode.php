@@ -44,7 +44,7 @@ class GetGeocode {
       . "       and  L.longitude is not null"
       ;
 
-var_dump($sql);
+print($sql);
 
       $qry = $conn->prepare($sql);
       if (!$qry) {

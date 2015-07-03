@@ -36,7 +36,7 @@ public static function getCommonCriteria() {
 // . " and lower(trim(A.ad_location)) not regexp '^city of .+$'"
 // . " and lower(trim(A.ad_location)) not regexp '^.*county$'"
 . " and (   A.ad_siteaddress is null"
-. "      or A.ad_siteaddress = ''"
+. "      or A.ad_siteaddress = '')"
 
    // exclude phone number
    // http://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
